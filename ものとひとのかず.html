@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>まるのあぷり</title>
+    <!-- Tailwind CSS CDNを読み込み -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* フォントを日本語表示に適したSans Serif系に設定 */
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #f0f4f8;
+        }
+        /* 〇（円）のスタイルを定義 */
+        .circle {
+            /* 〇の見た目を文字からCSSの円に変更 */
+            /* 〇のサイズを 1.4rem に変更 */
+            width: 1.4rem;
+            height: 1.4rem;
+            border-radius: 50%; /* 完全な円形 */
+            border: 3px solid; /* 枠線（周り）の太さ */
+            margin-right: 0.5rem; /* 〇と〇の間にスペース */
+            flex-shrink: 0; /* 折り返し時に〇が縮まないようにする */
+
+            /* 色の変化のみをアニメーションさせる */
+            transition: background-color 0.3s, border-color 0.3s;
+            cursor: pointer; /* クリックできることを示す */
+        }
+        /* ボタンの共通スタイル */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- メインコンテナ -->
+    <div class="max-w-4xl w-full bg-white shadow-2xl rounded-xl p-8 space-y-8">
+
+        <!-- ボタンエリア -->
+        <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <button id="add-btn" class="btn bg-blue-500 text-white hover:bg-blue-600">
+                まるをふやす
+            </button>
+            <button id="remove-btn" class="btn bg-red-500 text-white hover:bg-red-600 disabled:bg-gray-400" disabled>
+                まるをへらす
+            </button>
+            <!-- リセットボタン -->
+            <button id="reset-btn" class="btn bg-gray-500 text-white hover:bg-gray-600 disabled:bg-gray-400" disabled>
+                ぜんぶけす
+            </button>
+        </div>
+
+        <!-- 〇の表示エリア -->
+        <div class="mt-8 pt-8 border-t border-gray-200">
+            <!-- 横スクロールを有効にする -->
+            <div class="flex items-start p-4 bg-gray-50 rounded-lg border border-dashed border-gray-300 overflow-x-auto">
+                
+                <!-- 「まえ」の文字 -->
+                <span class="text-xl font-bold text-gray-700 mr-4 whitespace-nowrap flex-shrink-0">まえ</span>
+
+                <!-- 〇のコンテナ: 折り返しを無効にし、中央揃え -->
+                <div id="circle-container" class="flex items-start flex-1 min-h-[50px] py-1 justify-center">
+                    <!-- ここに〇が追加されます -->
+                </div>
+
+                <!-- 「うしろ」の文字 -->
+                <span class="text-xl font-bold text-gray-700 ml-4 whitespace-nowrap flex-shrink-0">うしろ</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('circle-container');
+        const addButton = document.getElementById('add-btn');
+        const removeButton = document.getElementById('remove-btn');
+        const resetButton = document.getElementById('reset-btn');
+        const MAX_CIRCLES = 15; // 〇の最大数
+
+        let circleCount = 0;
+
+        // ボタンの状態（有効/無効）を更新する関数
+        function updateButtonState() {
+            // 〇が1つ以上あるときのみ「へらす」「ぜんぶけす」ボタンを有効にする
+            removeButton.disabled = circleCount === 0;
+            resetButton.disabled = circleCount === 0;
+
+            // 〇の数が最大数に達したら「ふやす」ボタンを無効にする
+            addButton.disabled = circleCount >= MAX_CIRCLES;
+        }
+
+        // 〇を増やす処理
+        addButton.addEventListener('click', () => {
+            // 最大数を超えていないかチェック
+            if (circleCount < MAX_CIRCLES) {
+                // 〇の要素（divタグ）を作成
+                const newCircle = document.createElement('div');
+                
+                // 初期クラス: 青い枠線 (border-blue-500)、白い背景 (bg-white) を設定
+                newCircle.className = 'circle border-blue-500 bg-white'; 
+
+                // 〇をクリックしたときの処理（トグル機能）
+                newCircle.addEventListener('click', () => {
+                    // 現在の状態が青系（白い中身）の場合
+                    if (newCircle.classList.contains('border-blue-500')) {
+                        // 青系のクラスを削除
+                        newCircle.classList.remove('border-blue-500', 'bg-white');
+                        // 赤系のクラスを追加（枠も中も赤）
+                        newCircle.classList.add('border-red-500', 'bg-red-500');
+                    } 
+                    // 現在の状態が赤系（赤い中身）の場合
+                    else if (newCircle.classList.contains('border-red-500')) {
+                        // 赤系のクラスを削除
+                        newCircle.classList.remove('border-red-500', 'bg-red-500');
+                        // 青系のクラスに戻す（青い枠、白い中）
+                        newCircle.classList.add('border-blue-500', 'bg-white');
+                    }
+                });
+                
+                // コンテナの最後に追加
+                container.appendChild(newCircle);
+
+                // 〇の数を更新
+                circleCount++;
+                
+                updateButtonState();
+            }
+        });
+
+        // 〇を減らす処理
+        removeButton.addEventListener('click', () => {
+            if (circleCount > 0) {
+                // コンテナ内の最後の要素を取得
+                const lastCircle = container.lastElementChild;
+                
+                // 〇の数を更新
+                circleCount--;
+
+                // 要素を即座に削除する
+                container.removeChild(lastCircle);
+
+                updateButtonState();
+            }
+        });
+
+        // リセット処理
+        resetButton.addEventListener('click', () => {
+            if (circleCount > 0) {
+                // コンテナの子要素をすべて削除する
+                container.innerHTML = ''; 
+                
+                // 〇のカウントをリセット
+                circleCount = 0;
+
+                // ボタンの状態を更新
+                updateButtonState();
+            }
+        });
+
+        // 初期状態を設定
+        updateButtonState();
+    </script>
+</body>
+</html>
