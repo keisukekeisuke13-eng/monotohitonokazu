@@ -10,7 +10,7 @@
         /* フォントを日本語表示に適したSans Serif系に設定 */
         body {
             font-family: 'Inter', 'Noto Sans JP', sans-serif;
-            background-color: #f0f4f8;
+            background-color: #f0f4f8; /* 画面いっぱいの背景色 */
         }
         /* 〇（円）のスタイルを定義 */
         .circle {
@@ -42,9 +42,10 @@
         }
     </style>
 </head>
+<!-- 画面の中央にコンテンツを配置し、余白を設定 -->
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- メインコンテナ -->
+    <!-- メインコンテナ: 白いカードの枠を復元 -->
     <div class="max-w-4xl w-full bg-white shadow-2xl rounded-xl p-8 space-y-8">
 
         <!-- ボタンエリア -->
@@ -69,8 +70,8 @@
                 <!-- 「まえ」の文字 -->
                 <span class="text-xl font-bold text-gray-700 mr-4 whitespace-nowrap flex-shrink-0">まえ</span>
 
-                <!-- 〇のコンテナ: 折り返しを無効にし、中央揃え -->
-                <div id="circle-container" class="flex items-start flex-1 min-h-[50px] py-1 justify-center">
+                <!-- 〇のコンテナ: 折り返しを無効にし、【修正】左揃えにする -->
+                <div id="circle-container" class="flex items-start flex-1 min-h-[50px] py-1 justify-start">
                     <!-- ここに〇が追加されます -->
                 </div>
 
